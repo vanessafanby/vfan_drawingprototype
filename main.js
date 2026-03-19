@@ -1,18 +1,39 @@
+// find our elements
+const stageContainer = document.getElementById("stage-container");
+const circleButton = document.getElementById("circle-button");
+// find stage width
+let stageContainerWidth = stageContainer.offsetWidth;
+//console.log(stageContainerWidth);
+// find stage height
+let stageContainerHeight = stageContainer.offsetHeight;
+//console.log(stageContainerHeight);
+// set default circle colour
+let circleColour = "red";
+
 // create the konva stage
 const stage = new Konva.Stage({
     container: "konva-stage",
-    width: 500,
-    height: 500
+    width: stageContainerWidth,
+    height: stageContainerHeight
 });
 
+// create our layer
 const firstLayer = new Konva.Layer();
 
-const circle = new Konva.Circle({
-    x: 250,
-    y: 250,
-    radius: 50,
-    fill: "red"
-});
 
-firstLayer.add(circle);
+// add the layer to our stage
 stage.add(firstLayer);
+
+// add interaction to button
+function drawNewCircle(){
+    const circle = new Konva.Circle({
+        x: stage.width() * Math.random(),
+        y: stage.height() * Math.random(),
+        radius: 50 * Math.random(),
+        fill: circleColour
+    });
+    // add the circle to our first layer
+    firstLayer.add(circle);
+}
+
+circleButton.addEventListener("click", drawNewCircle);
