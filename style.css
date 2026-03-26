@@ -7,4 +7,5 @@ main {
 .stageContainer {
     background-color: coral;
     flex: 1;
+    cursor: crosshair;
 }
