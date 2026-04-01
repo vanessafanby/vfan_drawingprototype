@@ -38,6 +38,11 @@ function drawNewCircle(){
 
 circleButton.addEventListener("click", drawNewCircle);
 
+// list of features
+// draw on canvas
+// eraser
+// colour select
+
 
 // drawing feature
 // feature analysis
