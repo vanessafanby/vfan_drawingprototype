@@ -1,6 +1,7 @@
 // find our elements
 const stageContainer = document.getElementById("stage-container");
 const circleButton = document.getElementById("circle-button");
+const imgUpload = document.getElementById("img-upload");
 // find stage width
 let stageContainerWidth = stageContainer.offsetWidth;
 //console.log(stageContainerWidth);
@@ -9,6 +10,8 @@ let stageContainerHeight = stageContainer.offsetHeight;
 //console.log(stageContainerHeight);
 // set default circle colour
 let circleColour = "red";
+// save last uploaded image
+let lastImageUploaded = null;
 
 // create the konva stage
 const stage = new Konva.Stage({
@@ -77,7 +80,7 @@ stage.on("mousedown", drawMouseDown);
 
 // user moves their mouse
 function drawMouseMove(){
-    console.log(Date.now());
+    //console.log(Date.now());
     // don't run if not drawing
     if(isDrawing === false){
         return;
@@ -97,3 +100,39 @@ function drawMouseUp(){
 // add function to mouseup event
 //stage.on("mouseup", drawMouseUp);
 window.addEventListener("mouseup", drawMouseUp);
+
+
+// feature analysis
+// goal : user to upload their own image to use in canvas
+// represented model : file input
+// behaviour : user clicks button, selects file, accepts selection, add to canvas
+// implemented model : convert file to URL, add to Konva as new Image object
+
+// function for storing the image
+function storeUploadedImage(e){
+    lastImageUploaded = URL.createObjectURL(e.target.files[0]);
+    console.log(lastImageUploaded);
+    addImageURLToCanvas(lastImageUploaded);
+}
+imgUpload.addEventListener("change", storeUploadedImage);
+
+
+// function for adding image to canvas
+function addImageURLToCanvas(url){
+    const imgObject = new Image();
+    imgObject.onload = () => {
+        if(imgObject.width > stage.width()){
+            // do something to scale it
+        }
+        // this will run when img is loaded
+        const konvaImage = new Konva.Image({
+            x: stage.width() / 2,
+            y: stage.height() /2,
+            image: imgObject,
+            width: 20,
+            height: 20
+        });
+        firstLayer.add(konvaImage);
+    }
+    imgObject.src = url;
+}
