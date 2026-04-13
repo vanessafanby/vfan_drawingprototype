@@ -1,0 +1,32 @@
+:root {
+  --colour01: black;
+  --colour02: white;
+  --colour03: coral;
+  --colour04: purple;
+  --border: dashed 0.2rem var(--colour03);
+}
+
+@media (prefers-colour-scheme: dark) {
+  --colour01: white;
+  --colour02: blank;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--colour02);
+  colour: var(--colour01);
+  border: var(--border);
+}
+
+.stageContainer {
+  background-color: coral;
+  flex: 1;
+  cursor: crosshair;
+}
+
+button {
+  color: var(--colour04);
+  border: var(--border);
+}
