@@ -1,31 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>changeMe!!!!</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Draw with Sound</title>
 
-    <script src="https://unpkg.com/konva@10/konva.min.js"></script>
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="style.css" />
 
-    <link rel="stylesheet" href="reset.css">
-    <link rel="stylesheet" href="style.css">
-    <script src="main.js" defer></script>
-</head>
-<body>
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="panel">
+        <h1>Draw with Sound</h1>
+        <p class="sub">A calm drawing space with soft looping sound.</p>
 
-<main>
+        <button id="audioBtn" class="primary">Start Sound</button>
 
-    <div class="toolBar">
-        <button id="circle-button">draw a new circle</button>
+        <section class="group">
+          <h2>Brush Tool</h2>
+          <div class="row">
+            <button class="tool-btn active" data-tool="pen">Pen</button>
+            <button class="tool-btn" data-tool="soft">Soft Brush</button>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Instrument</h2>
+          <div class="row">
+            <button class="instrument-btn active" data-instrument="piano">
+              Piano
+            </button>
+            <button class="instrument-btn" data-instrument="flute">
+              Flute
+            </button>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Colour</h2>
+          <input id="colorPicker" type="color" value="#7ea8bf" />
+        </section>
+
+        <section class="group">
+          <h2>Brush Size</h2>
+          <input id="sizeSlider" type="range" min="1" max="28" value="5" />
+        </section>
+
+        <section class="group">
+          <h2>Canvas</h2>
+          <div class="row">
+            <button id="undoBtn">Undo</button>
+            <button id="clearBtn">Clear</button>
+          </div>
+        </section>
+
+        <p class="note">
+          Press <strong>Start Sound</strong>, choose a brush, then draw slowly
+          on the canvas.
+        </p>
+      </aside>
+
+      <main class="canvas-wrap">
+        <div id="stage-container"></div>
+      </main>
     </div>
 
-    <div class="stageContainer" id="stage-container">
-        <div id="konva-stage"></div>
-    </div>
-
-</main>
-
-</body>
+    <script src="main.js"></script>
+  </body>
 </html>

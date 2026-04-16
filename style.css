@@ -1,32 +1,130 @@
-:root {
-  --colour01: black;
-  --colour02: white;
-  --colour03: coral;
-  --colour04: purple;
-  --border: dashed 0.2rem var(--colour03);
+html,
+body {
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #e9f1f2;
+  color: #35424a;
 }
 
-@media (prefers-colour-scheme: dark) {
-  --colour01: white;
-  --colour02: blank;
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
 }
 
-main {
+.panel {
+  background: rgba(255, 255, 255, 0.88);
+  border-right: 1px solid rgba(70, 90, 110, 0.12);
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background-color: var(--colour02);
-  colour: var(--colour01);
-  border: var(--border);
+  gap: 16px;
+  z-index: 2;
 }
 
-.stageContainer {
-  background-color: coral;
-  flex: 1;
-  cursor: crosshair;
+.panel h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.sub {
+  color: #60707a;
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #50616b;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 button {
-  color: var(--colour04);
-  border: var(--border);
+  border: 0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: #d8e6ea;
+  color: #314048;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+button:hover {
+  background: #cddfe5;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button.active {
+  background: #87aebe;
+  color: white;
+}
+
+button.primary {
+  background: #7398a7;
+  color: white;
+}
+
+input[type="color"] {
+  width: 100%;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #87aebe;
+}
+
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #f6fbfb 0%, #e7f0f1 100%);
+}
+
+#stage-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.note {
+  margin-top: auto;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #6b7b85;
+}
+
+@media (max-width: 860px) {
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .panel {
+    border-right: 0;
+    border-bottom: 1px solid rgba(70, 90, 110, 0.12);
+  }
 }
