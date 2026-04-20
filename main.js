@@ -1,49 +1,63 @@
-const popup = document.getElementById("popup");
-const okBtn = document.getElementById("okBtn");
+// -----------------------------
+// popup
+// -----------------------------
+let popup = document.getElementById("popup");
+let okBtn = document.getElementById("okBtn");
 
-const audioBtn = document.getElementById("audioBtn");
-const colorPicker = document.getElementById("colorPicker");
-const sizeSlider = document.getElementById("sizeSlider");
-const undoBtn = document.getElementById("undoBtn");
-const clearBtn = document.getElementById("clearBtn");
-const toolButtons = document.querySelectorAll(".tool-btn");
-const instrumentButtons = document.querySelectorAll(".instrument-btn");
-const stageContainer = document.getElementById("stage-container");
+okBtn.addEventListener("click", closePopup);
 
+function closePopup() {
+  popup.remove();
+}
+
+// -----------------------------
+// main variables
+// -----------------------------
 let currentTool = "pen";
 let currentInstrument = "piano";
+
 let isDrawing = false;
 let currentLine = null;
-let drawnShapes = [];
-let lastSoundTime = 0;
 let lastPoint = null;
+let lastSoundTime = 0;
 
-let pianoSynth;
-let fluteSynth;
-let activeSynth;
 let audioStarted = false;
 
-// popup close
-okBtn.addEventListener("click", () => {
-  popup.style.display = "none";
-});
+let drawnShapes = [];
 
-// =========================
-// KONVA SETUP
-// =========================
-const stage = new Konva.Stage({
+// -----------------------------
+// html elements
+// -----------------------------
+let audioBtn = document.getElementById("audioBtn");
+let colorPicker = document.getElementById("colorPicker");
+let sizeSlider = document.getElementById("sizeSlider");
+let undoBtn = document.getElementById("undoBtn");
+let clearBtn = document.getElementById("clearBtn");
+
+let penBtn = document.getElementById("penBtn");
+let softBtn = document.getElementById("softBtn");
+
+let pianoBtn = document.getElementById("pianoBtn");
+let fluteBtn = document.getElementById("fluteBtn");
+
+let stageContainer = document.getElementById("stage-container");
+
+// -----------------------------
+// konva setup
+// -----------------------------
+let stage = new Konva.Stage({
   container: "stage-container",
   width: stageContainer.clientWidth,
   height: stageContainer.clientHeight,
 });
 
-const bgLayer = new Konva.Layer();
-const drawLayer = new Konva.Layer();
+let bgLayer = new Konva.Layer();
+let drawLayer = new Konva.Layer();
 
 stage.add(bgLayer);
 stage.add(drawLayer);
 
-const background = new Konva.Rect({
+let background = new Konva.Rect({
   x: 0,
   y: 0,
   width: stage.width(),
@@ -57,23 +71,42 @@ const background = new Konva.Rect({
 bgLayer.add(background);
 bgLayer.draw();
 
-// =========================
-// AUDIO SETUP
-// =========================
-function setupAudio() {
-  const reverb = new Tone.Reverb({
+// -----------------------------
+// sound setup
+// -----------------------------
+let pianoSynth;
+let fluteSynth;
+let activeSynth;
+
+audioBtn.addEventListener("click", startAudio);
+
+async function startAudio() {
+  await Tone.start();
+
+  if (!pianoSynth) {
+    createSynths();
+  }
+
+  audioStarted = true;
+  audioBtn.textContent = "Sound Ready";
+}
+
+function createSynths() {
+  let reverb = new Tone.Reverb({
     decay: 6,
     wet: 0.35,
   }).toDestination();
 
-  const delay = new Tone.FeedbackDelay({
+  let delay = new Tone.FeedbackDelay({
     delayTime: "8n",
     feedback: 0.18,
     wet: 0.12,
   }).connect(reverb);
 
   pianoSynth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: "triangle" },
+    oscillator: {
+      type: "triangle",
+    },
     envelope: {
       attack: 0.02,
       decay: 0.2,
@@ -84,7 +117,9 @@ function setupAudio() {
   }).connect(delay);
 
   fluteSynth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: "sine" },
+    oscillator: {
+      type: "sine",
+    },
     envelope: {
       attack: 0.08,
       decay: 0.15,
@@ -97,48 +132,128 @@ function setupAudio() {
   activeSynth = pianoSynth;
 }
 
-function switchInstrument(name) {
-  currentInstrument = name;
-  activeSynth = name === "flute" ? fluteSynth : pianoSynth;
-}
+// -----------------------------
+// sound mapping
+// -----------------------------
+let noteArray = ["C5", "A4", "G4", "E4", "D4", "C4", "A3", "G3"];
 
-const notes = ["C5", "A4", "G4", "E4", "D4", "C4", "A3", "G3"];
+function getMappedNote(yPosition) {
+  let stageHeight = stage.height();
+  let noteIndex = Math.floor((yPosition / stageHeight) * noteArray.length);
 
-function getMappedNote(y) {
-  const h = stage.height();
-  const index = Math.floor((y / h) * notes.length);
-  return notes[Math.max(0, Math.min(notes.length - 1, index))];
+  if (noteIndex < 0) {
+    noteIndex = 0;
+  }
+
+  if (noteIndex > noteArray.length - 1) {
+    noteIndex = noteArray.length - 1;
+  }
+
+  return noteArray[noteIndex];
 }
 
 function playDrawSound(point) {
-  if (!audioStarted || !activeSynth) return;
+  if (!audioStarted) {
+    return;
+  }
 
-  const now = performance.now();
-  if (now - lastSoundTime < 90) return;
+  if (!activeSynth) {
+    return;
+  }
 
-  const note = getMappedNote(point.y);
+  let now = performance.now();
 
+  if (now - lastSoundTime < 90) {
+    return;
+  }
+
+  let noteToPlay = getMappedNote(point.y);
   let velocity = 0.35;
 
   if (lastPoint) {
-    const dx = point.x - lastPoint.x;
-    const dy = point.y - lastPoint.y;
-    const speed = Math.sqrt(dx * dx + dy * dy);
-    velocity = Math.min(0.8, 0.25 + speed / 30);
+    let dx = point.x - lastPoint.x;
+    let dy = point.y - lastPoint.y;
+    let speed = Math.sqrt(dx * dx + dy * dy);
+
+    velocity = 0.25 + speed / 30;
+
+    if (velocity > 0.8) {
+      velocity = 0.8;
+    }
   }
 
-  activeSynth.triggerAttackRelease(note, "8n", undefined, velocity);
+  activeSynth.triggerAttackRelease(noteToPlay, "8n", undefined, velocity);
 
   lastSoundTime = now;
   lastPoint = point;
 }
 
-// =========================
-// DRAWING
-// =========================
+// -----------------------------
+// tool buttons
+// -----------------------------
+penBtn.addEventListener("click", selectPenTool);
+softBtn.addEventListener("click", selectSoftTool);
+
+function selectPenTool() {
+  currentTool = "pen";
+
+  penBtn.classList.add("active");
+  softBtn.classList.remove("active");
+}
+
+function selectSoftTool() {
+  currentTool = "soft";
+
+  softBtn.classList.add("active");
+  penBtn.classList.remove("active");
+}
+
+// -----------------------------
+// instrument buttons
+// -----------------------------
+pianoBtn.addEventListener("click", selectPiano);
+fluteBtn.addEventListener("click", selectFlute);
+
+function selectPiano() {
+  currentInstrument = "piano";
+
+  if (pianoSynth) {
+    activeSynth = pianoSynth;
+  }
+
+  pianoBtn.classList.add("active");
+  fluteBtn.classList.remove("active");
+
+  colorPicker.value = "#7ea8bf";
+}
+
+function selectFlute() {
+  currentInstrument = "flute";
+
+  if (fluteSynth) {
+    activeSynth = fluteSynth;
+  }
+
+  fluteBtn.classList.add("active");
+  pianoBtn.classList.remove("active");
+
+  colorPicker.value = "#a8bf97";
+}
+
+// -----------------------------
+// drawing
+// -----------------------------
+stage.on("mousedown touchstart", startDraw);
+stage.on("mousemove touchmove", drawMove);
+stage.on("mouseup touchend", endDraw);
+stage.on("mouseleave", endDraw);
+
 function startDraw() {
-  const pos = stage.getPointerPosition();
-  if (!pos) return;
+  let pos = stage.getPointerPosition();
+
+  if (!pos) {
+    return;
+  }
 
   isDrawing = true;
   lastPoint = pos;
@@ -152,10 +267,6 @@ function startDraw() {
       tension: 0.2,
       points: [pos.x, pos.y],
     });
-
-    drawLayer.add(currentLine);
-    drawnShapes.push(currentLine);
-    drawLayer.draw();
   }
 
   if (currentTool === "soft") {
@@ -168,23 +279,33 @@ function startDraw() {
       tension: 0.3,
       points: [pos.x, pos.y],
     });
-
-    drawLayer.add(currentLine);
-    drawnShapes.push(currentLine);
-    drawLayer.draw();
   }
+
+  drawLayer.add(currentLine);
+  drawnShapes.push(currentLine);
+  drawLayer.draw();
 
   playDrawSound(pos);
 }
 
 function drawMove() {
-  if (!isDrawing || !currentLine) return;
+  if (!isDrawing) {
+    return;
+  }
 
-  const pos = stage.getPointerPosition();
-  if (!pos) return;
+  if (!currentLine) {
+    return;
+  }
 
-  const newPoints = currentLine.points().concat([pos.x, pos.y]);
+  let pos = stage.getPointerPosition();
+
+  if (!pos) {
+    return;
+  }
+
+  let newPoints = currentLine.points().concat([pos.x, pos.y]);
   currentLine.points(newPoints);
+
   drawLayer.batchDraw();
 
   playDrawSound(pos);
@@ -196,75 +317,46 @@ function endDraw() {
   lastPoint = null;
 }
 
-// =========================
-// UI EVENTS
-// =========================
-toolButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    toolButtons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentTool = btn.dataset.tool;
-  });
-});
+// -----------------------------
+// undo and clear
+// -----------------------------
+undoBtn.addEventListener("click", undoLastShape);
+clearBtn.addEventListener("click", clearCanvas);
 
-instrumentButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    instrumentButtons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    switchInstrument(btn.dataset.instrument);
+function undoLastShape() {
+  let lastShape = drawnShapes.pop();
 
-    if (btn.dataset.instrument === "piano") {
-      colorPicker.value = "#7ea8bf";
-    } else {
-      colorPicker.value = "#a8bf97";
-    }
-  });
-});
-
-audioBtn.addEventListener("click", async () => {
-  await Tone.start();
-
-  if (!pianoSynth) {
-    setupAudio();
-  }
-
-  audioStarted = true;
-  audioBtn.textContent = "Sound Ready";
-});
-
-undoBtn.addEventListener("click", () => {
-  const lastShape = drawnShapes.pop();
   if (lastShape) {
     lastShape.destroy();
     drawLayer.draw();
   }
-});
+}
 
-clearBtn.addEventListener("click", () => {
-  drawnShapes.forEach((shape) => shape.destroy());
+function clearCanvas() {
+  for (let i = 0; i < drawnShapes.length; i++) {
+    drawnShapes[i].destroy();
+  }
+
   drawnShapes = [];
   drawLayer.draw();
-});
+}
 
-// =========================
-// STAGE EVENTS
-// =========================
-stage.on("mousedown touchstart", startDraw);
-stage.on("mousemove touchmove", drawMove);
-stage.on("mouseup touchend", endDraw);
-stage.on("mouseleave touchend", endDraw);
+// -----------------------------
+// resize
+// -----------------------------
+window.addEventListener("resize", resizeStage);
 
-// =========================
-// RESIZE
-// =========================
-window.addEventListener("resize", () => {
+function resizeStage() {
   stage.width(stageContainer.clientWidth);
   stage.height(stageContainer.clientHeight);
 
   background.width(stage.width());
   background.height(stage.height());
-  background.fillLinearGradientEndPoint({ x: 0, y: stage.height() });
+  background.fillLinearGradientEndPoint({
+    x: 0,
+    y: stage.height(),
+  });
 
   bgLayer.draw();
   drawLayer.draw();
-});
+}
