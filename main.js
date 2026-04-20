@@ -1,3 +1,6 @@
+const popup = document.getElementById("popup");
+const okBtn = document.getElementById("okBtn");
+
 const audioBtn = document.getElementById("audioBtn");
 const colorPicker = document.getElementById("colorPicker");
 const sizeSlider = document.getElementById("sizeSlider");
@@ -14,6 +17,16 @@ let currentLine = null;
 let drawnShapes = [];
 let lastSoundTime = 0;
 let lastPoint = null;
+
+let pianoSynth;
+let fluteSynth;
+let activeSynth;
+let audioStarted = false;
+
+// popup close
+okBtn.addEventListener("click", () => {
+  popup.style.display = "none";
+});
 
 // =========================
 // KONVA SETUP
@@ -47,23 +60,16 @@ bgLayer.draw();
 // =========================
 // AUDIO SETUP
 // =========================
-let pianoSynth;
-let fluteSynth;
-let activeSynth;
-let ambientPad;
-let ambientLoop;
-let audioStarted = false;
-
 function setupAudio() {
   const reverb = new Tone.Reverb({
-    decay: 8,
-    wet: 0.4,
+    decay: 6,
+    wet: 0.35,
   }).toDestination();
 
   const delay = new Tone.FeedbackDelay({
     delayTime: "8n",
-    feedback: 0.2,
-    wet: 0.18,
+    feedback: 0.18,
+    wet: 0.12,
   }).connect(reverb);
 
   pianoSynth = new Tone.PolySynth(Tone.Synth, {
@@ -72,7 +78,7 @@ function setupAudio() {
       attack: 0.02,
       decay: 0.2,
       sustain: 0.15,
-      release: 1.6,
+      release: 1.4,
     },
     volume: -4,
   }).connect(delay);
@@ -83,38 +89,12 @@ function setupAudio() {
       attack: 0.08,
       decay: 0.15,
       sustain: 0.45,
-      release: 1.4,
+      release: 1.2,
     },
     volume: -6,
   }).connect(delay);
 
-  ambientPad = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: "sine" },
-    envelope: {
-      attack: 2.4,
-      decay: 0.6,
-      sustain: 0.5,
-      release: 3,
-    },
-    volume: -14,
-  }).connect(reverb);
-
   activeSynth = pianoSynth;
-
-  const chords = [
-    ["C4", "E4", "G4"],
-    ["A3", "C4", "E4"],
-    ["F3", "A3", "C4"],
-    ["G3", "B3", "D4"],
-  ];
-
-  let chordIndex = 0;
-
-  ambientLoop = new Tone.Loop((time) => {
-    const chord = chords[chordIndex % chords.length];
-    ambientPad.triggerAttackRelease(chord, "2n", time, 0.3);
-    chordIndex++;
-  }, "1m");
 }
 
 function switchInstrument(name) {
@@ -248,13 +228,8 @@ audioBtn.addEventListener("click", async () => {
     setupAudio();
   }
 
-  if (Tone.Transport.state !== "started") {
-    Tone.Transport.bpm.value = 50;
-    ambientLoop.start(0);
-    Tone.Transport.start();
-    audioStarted = true;
-    audioBtn.textContent = "Sound On";
-  }
+  audioStarted = true;
+  audioBtn.textContent = "Sound Ready";
 });
 
 undoBtn.addEventListener("click", () => {

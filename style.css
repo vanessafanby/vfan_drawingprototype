@@ -117,6 +117,48 @@ input[type="range"] {
   color: #6b7b85;
 }
 
+/* popup */
+#popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(200, 200, 200, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-box {
+  background: #e6e6e6;
+  border: 2px solid black;
+  padding: 25px 40px;
+  width: 480px;
+  text-align: center;
+  font-family: inherit;
+}
+
+.popup-box p {
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+#okBtn {
+  flex: initial;
+  padding: 4px 12px;
+  border: 1px solid #333;
+  border-radius: 0;
+  background: #ddd;
+  color: #000;
+  cursor: pointer;
+}
+
+#okBtn:hover {
+  background: #ccc;
+}
+
 @media (max-width: 860px) {
   .app {
     grid-template-columns: 1fr;
@@ -126,5 +168,10 @@ input[type="range"] {
   .panel {
     border-right: 0;
     border-bottom: 1px solid rgba(70, 90, 110, 0.12);
+  }
+
+  .popup-box {
+    width: calc(100% - 40px);
+    padding: 20px;
   }
 }

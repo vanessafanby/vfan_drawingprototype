@@ -12,10 +12,22 @@
     <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
   </head>
   <body>
+    <div id="popup">
+      <div class="popup-box">
+        <p>
+          As you draw on the canvas, audio will be generated, so make sure your
+          volume is set comfortably.<br /><br />
+          Try moving slowly and see how the sound responds.
+        </p>
+
+        <button id="okBtn">OK</button>
+      </div>
+    </div>
+
     <div class="app">
       <aside class="panel">
-        <h1>Draw with Sound</h1>
-        <p class="sub">A calm drawing space with soft looping sound.</p>
+        <h1>Sketch the Sound</h1>
+        <!-- <p class="sub">A calm drawing space with responsive sound.</p> -->
 
         <button id="audioBtn" class="primary">Start Sound</button>
 
@@ -58,8 +70,7 @@
         </section>
 
         <p class="note">
-          Press <strong>Start Sound</strong>, choose a brush, then draw slowly
-          on the canvas.
+          Press Start Sound, choose a brush, then doodle freely on the canvas.
         </p>
       </aside>
 
