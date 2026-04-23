@@ -23,14 +23,10 @@ let fluteSynth;
 let activeSynth;
 let audioStarted = false;
 
-// popup close
 okBtn.addEventListener("click", () => {
   popup.style.display = "none";
 });
 
-// =========================
-// KONVA SETUP
-// =========================
 const stage = new Konva.Stage({
   container: "stage-container",
   width: stageContainer.clientWidth,
@@ -57,9 +53,6 @@ const background = new Konva.Rect({
 bgLayer.add(background);
 bgLayer.draw();
 
-// =========================
-// AUDIO SETUP
-// =========================
 function setupAudio() {
   const reverb = new Tone.Reverb({
     decay: 6,
@@ -133,9 +126,6 @@ function playDrawSound(point) {
   lastPoint = point;
 }
 
-// =========================
-// DRAWING
-// =========================
 function startDraw() {
   const pos = stage.getPointerPosition();
   if (!pos) return;
@@ -246,17 +236,11 @@ clearBtn.addEventListener("click", () => {
   drawLayer.draw();
 });
 
-// =========================
-// STAGE EVENTS
-// =========================
 stage.on("mousedown touchstart", startDraw);
 stage.on("mousemove touchmove", drawMove);
 stage.on("mouseup touchend", endDraw);
 stage.on("mouseleave touchend", endDraw);
 
-// =========================
-// RESIZE
-// =========================
 window.addEventListener("resize", () => {
   stage.width(stageContainer.clientWidth);
   stage.height(stageContainer.clientHeight);
