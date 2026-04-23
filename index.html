@@ -19,6 +19,8 @@
           volume is set comfortably.<br /><br />
           Try moving slowly and see how the sound responds.
         </p>
+        <!-- I've added a popup screen appearing before the user enters the experience. I added this because I wanted to introduce the interaction to the audience. Without this, users might start drawing without realising that audio will play, which is then really confusing. Furtheremore, I have kept it writtem simple since it is just a light introduction, introducing users what to expect. (Move slowly, and move/experiment between sound and drawing) 
+         Furthermore, the pressable 'OK' button allows the user to dismiss the popup and enter the main page. Mostly, allowing them to carefully read the instructions, experiencing the website at the best ability.-->
 
         <button id="okBtn">OK</button>
       </div>
@@ -27,9 +29,11 @@
     <div class="app">
       <aside class="panel">
         <h1>Sketch the Sound</h1>
-        <!-- <p class="sub">A calm drawing space with responsive sound.</p> -->
+        <!-- I used this container so the page could be divided into two clear areas: the control panel and the canvas. This is to keep the interface organised since it separates the tool settings from the doodling space -->
+        <!-- I came up with the website title “Sketch the Sound” because I wanted it to sound more expressive and poetic. The word “sketch” feels softer, while “sound” makes it clear that the audio element is central. -->
 
         <button id="audioBtn" class="primary">Start Sound</button>
+        <!-- I wanted the user to make a conscious choice to enter the sound experience. At the same time, it gives the interaction a starting point, which can make the experience feel more intentional. However, peer user testing feedback showed that this step was not immediately clear, so this is something I would need to refine later. -->
 
         <section class="group">
           <h2>Brush Tool</h2>
@@ -38,6 +42,8 @@
             <button class="tool-btn" data-tool="soft">Soft Brush</button>
           </div>
         </section>
+        <!-- Here, I have added a section that allows users to select between different brush types. I grouped these buttons together because they both affect the visual quality of the drawing. I have made the pen as the default brush, which is shown through the active class. I've decided to make pen as default since it is the most familiar and controlled option. On the other hand, the soft brush is a more layered mark, which supports the calming tone of the project.
+        I wanted users to have at least some variation in how they draw, because different marks can change how the interaction feels emotionally. Even though the tool options are simple, I want to encourage them to experiment and express themselves more. -->
 
         <section class="group">
           <h2>Instrument</h2>
@@ -50,16 +56,22 @@
             </button>
           </div>
         </section>
+        <!-- Here is where the user can change the instrument sound. I added this because I wanted users to shape the mood of the experience. At first, I wanted to allow users switch between instruments to give them a stronger sense of control. I chose these two instruments: piano and flute, because they are soft and melodic, allowing them to make a nice musical piece even without knowing any music beforehand. 
+        Furthermore, I feel like these two instruments fit the calm atmosphere better than something louder or harsher. -->
 
         <section class="group">
           <h2>Colour</h2>
           <input id="colorPicker" type="color" value="#7ea8bf" />
         </section>
+        <!-- I have added a colour input here so users can change the appearance of their marks. I added this because I think colour is an important part of self-expression, giving users control over colour makes the drawing feel more personal.
+        To add on, I have made the default colour as a soft blue tone, which matches the overall colour palette of the site. This is to make the overall website aesthetic to feel gentle and cohesive.  -->
 
         <section class="group">
           <h2>Brush Size</h2>
           <input id="sizeSlider" type="range" min="1" max="28" value="5" />
         </section>
+        <!-- Here, I have added a slider control to the brush size. I included it to allow users change the sizes of the marker. Smaller strokes can feel more delicate and precise, while larger strokes feel more expressive. 
+        I have made the range 1 to 28 to allow users have enough variation to explore, while still keeping the tool simple. -->
 
         <section class="group">
           <h2>Canvas</h2>
@@ -68,11 +80,15 @@
             <button id="clearBtn">Clear</button>
           </div>
         </section>
+        <!-- Here, I added an Undo button as allows users to make mistakes, without worrying about something they did wrong. I also added a Clear button because I wanted the canvas to feel temporary, like a space users can restart whenever they want.
+      Since the project is not about creating a perfect finished artwork any only about experimentation, it was important to add these two button. However, peer user feedback also stated that I should add an eraser button or a Redo button, just to make everything look more nicer. -->
 
         <p class="note">
           Press Start Sound, choose a brush, then doodle freely on the canvas.
         </p>
       </aside>
+      <!-- Here I have put a short note placed in the panel to guide the user. I added it because I wanted it to act as a small reminder. However, in the peer user testing response, some said that it was unclear, (font too small, lower on the page, test too small weren't able to see). 
+      Therefore, I would also need to change this in the future. E.g Put this in the top/middle of the page. Make this a part of the pop-up screen.  -->
 
       <main class="canvas-wrap">
         <div id="stage-container"></div>

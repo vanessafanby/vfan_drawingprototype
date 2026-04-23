@@ -5,6 +5,8 @@ body {
   background: #e9f1f2;
   color: #35424a;
 }
+/* I used overflow here so the website looks contained and clean. Furthermore, I chose Arial as my font since it looks simple and readable. This is my aim too, I wanted the typography to stay quiet rather than decorative, so it would not compete with the drawing and sound interaction. 
+The background colour I used is a soft blue grey tone, which makes the overall aestheic look gentle and calming. To add on, I made the text colour is slightly darker, to allow the user read it more clearly, but still matchs the overall mood at the same time. */
 
 .app {
   width: 100vw;
@@ -12,6 +14,8 @@ body {
   display: grid;
   grid-template-columns: 280px 1fr;
 }
+/* Here, I divided the page into two areas: a left side control panel and a larger drawing area. I chose this structure because I wanted the interface to feel organised and easy to understand. 
+This is my main aim too, to make the canvas like like the main space, while the controls sits quietly to the side. */
 
 .panel {
   background: rgba(255, 255, 255, 0.88);
@@ -22,17 +26,20 @@ body {
   gap: 16px;
   z-index: 2;
 }
+/* I used a semi-transparent white background for my left control panel side. This is because I wanted the panel to feel light and soft, which fits the atmosphere better and looks more balanced.  */
 
 .panel h1 {
   font-size: 1.5rem;
   font-weight: 600;
 }
+/* Here, I have decided to make the main title look slightly larger. However, I still kept it simple to introduce the experience clearly. */
 
 .sub {
   color: #60707a;
   line-height: 1.45;
   font-size: 0.95rem;
 }
+/* Here, I have made the subtitle slightly smaller and lighter in colour, this is to allow the user to read it as secondary information. Furthermore, I increased the line-height to makes it easier to read.  */
 
 .group {
   display: flex;
@@ -51,6 +58,7 @@ body {
   gap: 8px;
   flex-wrap: wrap;
 }
+/* I added in small gap to help prevent the interface look too cramped. */
 
 button {
   border: 0;
@@ -63,6 +71,8 @@ button {
   font-size: 0.95rem;
   flex: 1;
 }
+/* Here, I've rounded the corners to make it look more soft, and calming. I feel sharp edges will feel too rigid for the mood of my project. Therefore at the end, I chose it to have softer shapes make the interface feel friendlier and more relaxed. The background colour I have used is a pale blue grey, which keeps the controls visually connected to the rest of the palette.
+To add on, I added the hover and active transitions here to make the buttons feel responsive. This is because I wanted users to feel that the interface is alive and reacting to them, allowing them to feel that the whole interaction is smooth.  */
 
 button:hover {
   background: #cddfe5;
@@ -71,6 +81,7 @@ button:hover {
 button:active {
   transform: translateY(1px);
 }
+/* Here, I've added small visual changes when the user interacts with a button. This is just to make the user think that everything is responsive and has feedback when they interact with it. The colour shift on hover shows that the element is interactive, and the slight movement on click makes it feel more physical. */
 
 button.active {
   background: #87aebe;
@@ -81,6 +92,7 @@ button.primary {
   background: #7398a7;
   color: white;
 }
+/* I've added this to show users which button is currently selected. The active state makes it clear which brush or instrument is chosen, which allows them to understand it more clearer. */
 
 input[type="color"] {
   width: 100%;
@@ -90,11 +102,13 @@ input[type="color"] {
   background: transparent;
   cursor: pointer;
 }
+/* I've made the colour picker look wider and taller so it feels easy to use and visually balanced with the buttons. Furthermore, I've used rounded corners too since it matches the rest of the interface.  */
 
 input[type="range"] {
   width: 100%;
   accent-color: #87aebe;
 }
+/* I wanted this colour slider to stretch across the panel so it feels easy to adjust.  */
 
 .canvas-wrap {
   position: relative;
@@ -102,6 +116,7 @@ input[type="range"] {
   height: 100%;
   background: linear-gradient(180deg, #f6fbfb 0%, #e7f0f1 100%);
 }
+/* I used another soft gradient on this main drawing area to keep the space from feeling too flat. */
 
 #stage-container {
   position: absolute;
@@ -116,6 +131,8 @@ input[type="range"] {
   line-height: 1.45;
   color: #6b7b85;
 }
+/* I made the help instructions pushed to the lower part of the panel, acting more like a gentle note, however it was not useful at all (according to peer user feedback, some people didn't even see this note), so I will need to change this in the future. 
+Here, I chose a smaller font and softer colour so it feels like a 'quiet' suggestion. (not useful) */
 
 #popup {
   position: fixed;
@@ -129,6 +146,8 @@ input[type="range"] {
   justify-content: center;
   z-index: 999;
 }
+/* I added this pop-up screen because I wanted users to pause briefly, read the main purpose of the website before entering the website, especially since the project contains sound and may need a small amount of onboarding.
+Furthermore, I used a semi-transparent grey background here to help separate the popup from the page. It also gives the impression that the main experience is there, waiting behind it, welcoming the user to enter.    */
 
 .popup-box {
   background: #e6e6e6;
@@ -138,6 +157,7 @@ input[type="range"] {
   text-align: center;
   font-family: inherit;
 }
+/* I made this pop-up very plain and simple, as if it was just a system message box. I've made the pop-up centred, to make the user notice this whilst landing on the page. I feel I could make it look more interesting in the future. As an example, changing the border and trying out different colours. Using a variety of colours, making it look colourful (since it's a dooling website) */
 
 .popup-box p {
   margin-bottom: 16px;
@@ -153,10 +173,12 @@ input[type="range"] {
   color: #000;
   cursor: pointer;
 }
+/* Here, I've made the OK button look simpler, boxier and look more noticable. In the future, I will also need to change the colour of this, just to make the aesthetic look more nicer, make the landing page look more colourful and engaging.  */
 
 #okBtn:hover {
   background: #ccc;
 }
+/* I added a small hover effect here --> make buttons feel responsive. */
 
 @media (max-width: 860px) {
   .app {
@@ -174,3 +196,5 @@ input[type="range"] {
     padding: 20px;
   }
 }
+
+/* Just in case the user views it in a different device or a smaller screen, I added this to allow the project remain usable. As an example, instead of keeping the side panel beside the canvas, the layout will then change vertically if viewing on a smaller screen. As a result, the user can access and interact with my project at any time!  */

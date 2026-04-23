@@ -3,6 +3,7 @@
 *::after {
   box-sizing: border-box;
 }
+/* I added border-box to make the interface feel clean and stable. */
 
 html,
 body {
@@ -11,6 +12,7 @@ body {
   width: 100%;
   height: 100%;
 }
+/* Here, I made both html and body fill the full browser window. This because I wanted the website to take up the entire screen and feel immersive, rather than sitting inside the browser.*/
 
 ul,
 ol {
@@ -23,6 +25,7 @@ button,
 input {
   font: inherit;
 }
+/* I added this to make buttons and input fields use the same font as the rest of the page. This is to ensure the whole is clean, and has a balanced aesthetic feel.   */
 
 button {
   border: none;
