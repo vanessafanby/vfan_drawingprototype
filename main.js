@@ -186,9 +186,6 @@ function endDraw() {
   lastPoint = null;
 }
 
-// =========================
-// UI EVENTS
-// =========================
 toolButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     toolButtons.forEach((b) => b.classList.remove("active"));
