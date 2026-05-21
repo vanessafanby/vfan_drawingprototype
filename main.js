@@ -1,9 +1,7 @@
 const popup = document.getElementById("popup");
 const okBtn = document.getElementById("okBtn");
 
-const audioBtn = document.getElementById("audioBtn");
 const colorPicker = document.getElementById("colorPicker");
-const sizeSlider = document.getElementById("sizeSlider");
 
 const undoBtn = document.getElementById("undoBtn");
 const redoBtn = document.getElementById("redoBtn");
@@ -11,14 +9,29 @@ const clearBtn = document.getElementById("clearBtn");
 
 const toggleLoopBtn = document.getElementById("toggleLoopBtn");
 const clearLoopBtn = document.getElementById("clearLoopBtn");
+
 const recordingStatus = document.getElementById("recordingStatus");
+
 const loopProgress = document.getElementById("loopProgress");
+
 const recordDot = document.getElementById("recordDot");
 
+const scaleSelect = document.getElementById("scaleSelect");
+
+const volumeSlider = document.getElementById("volumeSlider");
+
+const exportBtn = document.getElementById("exportBtn");
+
 const toolButtons = document.querySelectorAll(".tool-btn");
+
+const sizeButtons = document.querySelectorAll(".size-btn");
+
 const stageContainer = document.getElementById("stage-container");
 
 let currentTool = "pen";
+
+let currentBrush = "medium";
+let currentBrushWidth = 10;
 let currentInstrument = "piano";
 
 let isDrawing = false;
@@ -28,235 +41,229 @@ let drawnShapes = [];
 let redoShapes = [];
 
 let lastSoundTime = 0;
-let lastPoint = null;
 
-let pianoSynth;
 let fluteSynth;
+let pianoSynth;
 let guitarSynth;
 let activeSynth;
+
 let audioStarted = false;
 
-let recordedNotes = [];
+let recordedEvents = [];
 
-let loopStartTime = null;
-let loopTimer = null;
-let loopPlaybackTimer = null;
+let loopLength = 8000;
+
 let isLooping = false;
 
-const loopLength = 8000;
+let loopStartTime = null;
 
-okBtn.addEventListener("click", () => {
+let loopAnimation;
+let playbackInterval;
+
+okBtn.addEventListener("click", async () => {
   popup.remove();
+
+  await Tone.start();
+
+  setupAudio();
+
+  audioStarted = true;
 });
 
 const stage = new Konva.Stage({
   container: "stage-container",
+
   width: stageContainer.clientWidth,
+
   height: stageContainer.clientHeight,
 });
 
 const bgLayer = new Konva.Layer();
+
 const drawLayer = new Konva.Layer();
+
+const replayLayer = new Konva.Layer();
 
 stage.add(bgLayer);
 stage.add(drawLayer);
+stage.add(replayLayer);
 
 const background = new Konva.Rect({
   x: 0,
   y: 0,
+
   width: stage.width(),
+
   height: stage.height(),
-  fillLinearGradientStartPoint: { x: 0, y: 0 },
-  fillLinearGradientEndPoint: { x: 0, y: stage.height() },
-  fillLinearGradientColorStops: [0, "#f6fbfb", 1, "#e7f0f1"],
+
+  fillLinearGradientStartPoint: {
+    x: 0,
+    y: 0,
+  },
+
+  fillLinearGradientEndPoint: {
+    x: 0,
+    y: stage.height(),
+  },
+
+  fillLinearGradientColorStops: [0, "#fbf7fc", 1, "#eaf4f6"],
+
   listening: false,
 });
 
 bgLayer.add(background);
+
 bgLayer.draw();
 
 function setupAudio() {
   const reverb = new Tone.Reverb({
-    decay: 6,
-    wet: 0.35,
+    decay: 5,
+    wet: 0.3,
   }).toDestination();
 
   const delay = new Tone.FeedbackDelay({
     delayTime: "8n",
-    feedback: 0.18,
-    wet: 0.12,
+
+    feedback: 0.15,
+
+    wet: 0.1,
   }).connect(reverb);
 
-  pianoSynth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: "triangle" },
-    envelope: {
-      attack: 0.02,
-      decay: 0.2,
-      sustain: 0.15,
-      release: 1.4,
-    },
-    volume: -4,
-  }).connect(delay);
-
   fluteSynth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: "sine" },
+    oscillator: {
+      type: "sine",
+    },
+
     envelope: {
       attack: 0.08,
-      decay: 0.15,
-      sustain: 0.45,
+
+      decay: 0.12,
+
+      sustain: 0.35,
+
       release: 1.2,
     },
+
+    volume: -10,
+  }).connect(delay);
+
+  pianoSynth = new Tone.PolySynth(Tone.Synth, {
+    oscillator: {
+      type: "triangle",
+    },
+
+    envelope: {
+      attack: 0.02,
+
+      decay: 0.2,
+
+      sustain: 0.15,
+
+      release: 1.4,
+    },
+
     volume: -6,
   }).connect(delay);
 
-  guitarSynth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: "sawtooth" },
-    envelope: {
-      attack: 0.01,
-      decay: 0.25,
-      sustain: 0.12,
-      release: 1,
-    },
-    volume: -8,
-  }).connect(delay);
+  guitarSynth = new Tone.PluckSynth({
+    attackNoise: 1.5,
 
-  chooseInstrumentFromBrushSize();
+    dampening: 1800,
+
+    resonance: 0.95,
+  }).connect(reverb);
+
+  setBrushType("medium");
 }
 
-function switchInstrument(name) {
-  currentInstrument = name;
+function setBrushType(type) {
+  currentBrush = type;
 
-  if (name === "flute") {
+  sizeButtons.forEach((btn) => {
+    btn.classList.remove("active");
+  });
+
+  document.querySelector(`[data-size="${type}"]`).classList.add("active");
+
+  if (type === "small") {
+    currentBrushWidth = 4;
+
+    currentInstrument = "flute";
+
     activeSynth = fluteSynth;
-  } else if (name === "guitar") {
-    activeSynth = guitarSynth;
-  } else {
+  }
+
+  if (type === "medium") {
+    currentBrushWidth = 10;
+
+    currentInstrument = "piano";
+
     activeSynth = pianoSynth;
   }
-}
 
-function chooseInstrumentFromBrushSize() {
-  const brushSize = Number(sizeSlider.value);
+  if (type === "large") {
+    currentBrushWidth = 20;
 
-  if (brushSize <= 10) {
-    switchInstrument("flute");
-    colorPicker.value = "#a8bf97";
-  } else if (brushSize >= 20) {
-    switchInstrument("guitar");
-    colorPicker.value = "#c6a477";
-  } else {
-    switchInstrument("piano");
-    colorPicker.value = "#7ea8bf";
+    currentInstrument = "guitar";
+
+    activeSynth = guitarSynth;
   }
 }
 
-sizeSlider.addEventListener("input", () => {
-  if (audioStarted) {
-    chooseInstrumentFromBrushSize();
+sizeButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    setBrushType(btn.dataset.size);
+  });
+});
+
+toolButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    toolButtons.forEach((b) => {
+      b.classList.remove("active");
+    });
+
+    btn.classList.add("active");
+
+    currentTool = btn.dataset.tool;
+  });
+});
+
+const pentatonicNotes = ["C5", "A4", "G4", "E4", "D4", "C4", "A3"];
+
+const majorNotes = ["C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4"];
+
+const minorNotes = ["C5", "Bb4", "Ab4", "G4", "F4", "Eb4", "D4", "C4"];
+
+let currentScale = pentatonicNotes;
+
+scaleSelect.addEventListener("change", () => {
+  if (scaleSelect.value === "pentatonic") {
+    currentScale = pentatonicNotes;
+  }
+
+  if (scaleSelect.value === "major") {
+    currentScale = majorNotes;
+  }
+
+  if (scaleSelect.value === "minor") {
+    currentScale = minorNotes;
   }
 });
 
-const notes = ["C5", "A4", "G4", "E4", "D4", "C4", "A3", "G3"];
+volumeSlider.addEventListener("input", () => {
+  const volume = Number(volumeSlider.value);
+
+  fluteSynth.volume.value = volume - 2;
+
+  pianoSynth.volume.value = volume;
+});
 
 function getMappedNote(y) {
   const h = stage.height();
-  const index = Math.floor((y / h) * notes.length);
 
-  return notes[Math.max(0, Math.min(notes.length - 1, index))];
-}
+  const index = Math.floor((y / h) * currentScale.length);
 
-function getLoopTime() {
-  if (loopStartTime === null) {
-    return 0;
-  }
-
-  return (performance.now() - loopStartTime) % loopLength;
-}
-
-function updateLoopUI() {
-  if (!isLooping || loopStartTime === null) {
-    recordingStatus.textContent = "Echo ready";
-    loopProgress.style.width = "0%";
-    recordDot.classList.remove("recording");
-    return;
-  }
-
-  const loopTime = getLoopTime();
-  const seconds = loopTime / 1000;
-  const percent = (loopTime / loopLength) * 100;
-
-  loopProgress.style.width = percent + "%";
-
-  if (isDrawing) {
-    recordingStatus.textContent =
-      "Recording echo: " + seconds.toFixed(1) + "s / 8.0s";
-    recordDot.classList.add("recording");
-  } else {
-    recordingStatus.textContent =
-      "Echo looping: " + seconds.toFixed(1) + "s / 8.0s";
-    recordDot.classList.remove("recording");
-  }
-}
-
-function startEchoLoop() {
-  if (!audioStarted) {
-    return;
-  }
-
-  isLooping = true;
-  loopStartTime = performance.now();
-
-  toggleLoopBtn.textContent = "Stop Echo";
-
-  clearInterval(loopTimer);
-  loopTimer = setInterval(updateLoopUI, 50);
-
-  playRecordedLoop();
-  clearInterval(loopPlaybackTimer);
-  loopPlaybackTimer = setInterval(playRecordedLoop, loopLength);
-}
-
-function stopEchoLoop() {
-  isLooping = false;
-
-  toggleLoopBtn.textContent = "Begin Echo";
-
-  clearInterval(loopTimer);
-  clearInterval(loopPlaybackTimer);
-
-  updateLoopUI();
-}
-
-function playRecordedLoop() {
-  if (!audioStarted || recordedNotes.length === 0) {
-    return;
-  }
-
-  recordedNotes.forEach((item) => {
-    setTimeout(() => {
-      switchInstrument(item.instrument);
-
-      activeSynth.triggerAttackRelease(
-        item.note,
-        "8n",
-        undefined,
-        item.velocity
-      );
-    }, item.time);
-  });
-}
-
-function saveNoteToLoop(note, velocity) {
-  if (!isLooping || loopStartTime === null) {
-    return;
-  }
-
-  recordedNotes.push({
-    note: note,
-    time: getLoopTime(),
-    velocity: velocity,
-    instrument: currentInstrument,
-  });
+  return currentScale[Math.max(0, Math.min(currentScale.length - 1, index))];
 }
 
 function playDrawSound(point) {
@@ -266,26 +273,129 @@ function playDrawSound(point) {
 
   if (now - lastSoundTime < 90) return;
 
-  chooseInstrumentFromBrushSize();
-
   const note = getMappedNote(point.y);
 
-  let velocity = 0.35;
-
-  if (lastPoint) {
-    const dx = point.x - lastPoint.x;
-    const dy = point.y - lastPoint.y;
-    const speed = Math.sqrt(dx * dx + dy * dy);
-
-    velocity = Math.min(0.8, 0.25 + speed / 30);
+  if (currentInstrument === "guitar") {
+    activeSynth.triggerAttack(note);
+  } else {
+    activeSynth.triggerAttackRelease(note, "8n");
   }
 
-  activeSynth.triggerAttackRelease(note, "8n", undefined, velocity);
+  if (isLooping) {
+    recordedEvents.push({
+      x: point.x,
 
-  saveNoteToLoop(note, velocity);
+      y: point.y,
+
+      note: note,
+
+      color: colorPicker.value,
+
+      width: currentTool === "soft" ? currentBrushWidth * 2 : currentBrushWidth,
+
+      instrument: currentInstrument,
+
+      tool: currentTool,
+
+      opacity: currentTool === "soft" ? 0.18 : 1,
+
+      time: (performance.now() - loopStartTime) % loopLength,
+    });
+  }
 
   lastSoundTime = now;
-  lastPoint = point;
+}
+
+function createReplayTrail(event) {
+  if (event.tool === "pen") {
+    const ring = new Konva.Circle({
+      x: event.x,
+
+      y: event.y,
+
+      radius: event.width * 0.9,
+
+      stroke: event.color,
+
+      strokeWidth: 2,
+
+      opacity: 0.65,
+
+      shadowColor: event.color,
+
+      shadowBlur: 25,
+
+      scaleX: 0.5,
+
+      scaleY: 0.5,
+    });
+
+    replayLayer.add(ring);
+
+    replayLayer.draw();
+
+    const tween = new Konva.Tween({
+      node: ring,
+
+      duration: 1,
+
+      opacity: 0,
+
+      scaleX: 3,
+
+      scaleY: 3,
+
+      onFinish: () => {
+        ring.destroy();
+
+        replayLayer.draw();
+      },
+    });
+
+    tween.play();
+  }
+
+  if (event.tool === "soft") {
+    const glow = new Konva.Circle({
+      x: event.x,
+
+      y: event.y,
+
+      radius: event.width,
+
+      fill: event.color,
+
+      opacity: 0.18,
+
+      shadowColor: event.color,
+
+      shadowBlur: 40,
+    });
+
+    replayLayer.add(glow);
+
+    replayLayer.draw();
+
+    const tween = new Konva.Tween({
+      node: glow,
+
+      duration: 1.4,
+
+      opacity: 0,
+
+      scaleX: 2.6,
+
+      scaleY: 2.6,
+
+      onFinish: () => {
+        glow.destroy();
+
+        replayLayer.draw();
+      },
+    });
+
+    tween.play();
+  }
 }
 
 function startDraw() {
@@ -294,41 +404,33 @@ function startDraw() {
   if (!pos) return;
 
   isDrawing = true;
-  lastPoint = pos;
 
   redoShapes = [];
 
-  if (currentTool === "pen") {
-    currentLine = new Konva.Line({
-      stroke: colorPicker.value,
-      strokeWidth: Number(sizeSlider.value),
-      lineCap: "round",
-      lineJoin: "round",
-      tension: 0.2,
-      points: [pos.x, pos.y],
-    });
-  }
+  currentLine = new Konva.Line({
+    stroke: colorPicker.value,
 
-  if (currentTool === "soft") {
-    currentLine = new Konva.Line({
-      stroke: colorPicker.value,
-      strokeWidth: Number(sizeSlider.value) * 2,
-      opacity: 0.16,
-      lineCap: "round",
-      lineJoin: "round",
-      tension: 0.3,
-      points: [pos.x, pos.y],
-    });
-  }
+    strokeWidth:
+      currentTool === "soft" ? currentBrushWidth * 2 : currentBrushWidth,
 
-  if (!currentLine) return;
+    opacity: currentTool === "soft" ? 0.18 : 1,
+
+    lineCap: "round",
+
+    lineJoin: "round",
+
+    tension: 0.3,
+
+    points: [pos.x, pos.y],
+  });
 
   drawLayer.add(currentLine);
+
   drawnShapes.push(currentLine);
+
   drawLayer.draw();
 
   playDrawSound(pos);
-  updateLoopUI();
 }
 
 function drawMove() {
@@ -339,120 +441,207 @@ function drawMove() {
   if (!pos) return;
 
   const newPoints = currentLine.points().concat([pos.x, pos.y]);
+
   currentLine.points(newPoints);
 
   drawLayer.batchDraw();
+
   playDrawSound(pos);
-  updateLoopUI();
 }
 
 function endDraw() {
   isDrawing = false;
+
   currentLine = null;
-  lastPoint = null;
+}
+
+function updateLoopUI() {
+  if (!isLooping) {
+    recordingStatus.textContent = "Echo ready";
+
+    loopProgress.style.width = "0%";
+
+    return;
+  }
+
+  const elapsed = (performance.now() - loopStartTime) % loopLength;
+
+  const percent = (elapsed / loopLength) * 100;
+
+  loopProgress.style.width = percent + "%";
+
+  recordingStatus.textContent = "Recording echo...";
+}
+
+function playLoop() {
+  recordedEvents.forEach((event) => {
+    setTimeout(() => {
+      createReplayTrail(event);
+
+      if (event.instrument === "flute") {
+        activeSynth = fluteSynth;
+      }
+
+      if (event.instrument === "piano") {
+        activeSynth = pianoSynth;
+      }
+
+      if (event.instrument === "guitar") {
+        activeSynth = guitarSynth;
+      }
+
+      if (event.instrument === "guitar") {
+        activeSynth.triggerAttack(event.note);
+      } else {
+        activeSynth.triggerAttackRelease(event.note, "8n");
+      }
+    }, event.time);
+  });
+}
+
+function startLoop() {
+  isLooping = true;
+
+  loopStartTime = performance.now();
+
+  toggleLoopBtn.textContent = "Stop Echo";
+
+  recordDot.classList.add("recording");
+
+  playLoop();
+
+  playbackInterval = setInterval(() => {
+    playLoop();
+  }, loopLength);
+
+  loopAnimation = setInterval(() => {
+    updateLoopUI();
+  }, 30);
+}
+
+function stopLoop() {
+  isLooping = false;
+
+  toggleLoopBtn.textContent = "Begin Echo";
+
+  recordDot.classList.remove("recording");
+
+  clearInterval(playbackInterval);
+
+  clearInterval(loopAnimation);
 
   updateLoopUI();
 }
 
-toolButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    toolButtons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentTool = btn.dataset.tool;
-  });
+toggleLoopBtn.addEventListener("click", () => {
+  if (!isLooping) {
+    startLoop();
+  } else {
+    stopLoop();
+  }
 });
 
-audioBtn.addEventListener("click", async () => {
-  if (!audioStarted) {
-    await Tone.start();
+clearLoopBtn.addEventListener("click", () => {
+  recordedEvents = [];
 
-    if (!pianoSynth) {
-      setupAudio();
-    }
+  stopLoop();
 
-    audioStarted = true;
+  recordingStatus.textContent = "Echo cleared";
 
-    Tone.Destination.mute = false;
-
-    audioBtn.textContent = "🔊";
-  } else {
-    Tone.Destination.mute = !Tone.Destination.mute;
-
-    if (Tone.Destination.mute) {
-      audioBtn.textContent = "🔇";
-    } else {
-      audioBtn.textContent = "🔊";
-    }
-  }
+  loopProgress.style.width = "0%";
 });
 
 undoBtn.addEventListener("click", () => {
-  const lastShape = drawnShapes.pop();
+  const shape = drawnShapes.pop();
 
-  if (lastShape) {
-    lastShape.remove();
-    redoShapes.push(lastShape);
-    drawLayer.draw();
-  }
+  if (!shape) return;
+
+  shape.remove();
+
+  redoShapes.push(shape);
+
+  drawLayer.draw();
 });
 
 redoBtn.addEventListener("click", () => {
-  const redoShape = redoShapes.pop();
+  const shape = redoShapes.pop();
 
-  if (redoShape) {
-    drawLayer.add(redoShape);
-    drawnShapes.push(redoShape);
-    drawLayer.draw();
-  }
+  if (!shape) return;
+
+  drawLayer.add(shape);
+
+  drawnShapes.push(shape);
+
+  drawLayer.draw();
 });
 
 clearBtn.addEventListener("click", () => {
-  drawnShapes.forEach((shape) => shape.destroy());
-  redoShapes.forEach((shape) => shape.destroy());
+  // clear drawings
+  drawnShapes.forEach((shape) => {
+    shape.destroy();
+  });
 
   drawnShapes = [];
   redoShapes = [];
 
   drawLayer.draw();
-});
 
-toggleLoopBtn.addEventListener("click", () => {
-  if (!audioStarted) {
-    return;
-  }
+  // clear echo recording
+  recordedEvents = [];
 
-  if (isLooping) {
-    stopEchoLoop();
-  } else {
-    startEchoLoop();
-  }
-});
+  // stop echo playback
+  stopLoop();
 
-clearLoopBtn.addEventListener("click", () => {
-  recordedNotes = [];
-
-  stopEchoLoop();
-
+  // reset loop UI
   recordingStatus.textContent = "Echo cleared";
+
   loopProgress.style.width = "0%";
+
+  // clear replay trails
+  replayLayer.destroyChildren();
+
+  replayLayer.draw();
+});
+
+exportBtn.addEventListener("click", () => {
+  const dataURL = stage.toDataURL({
+    pixelRatio: 2,
+  });
+
+  const link = document.createElement("a");
+
+  link.download = "sketchy-sketch-sound.png";
+
+  link.href = dataURL;
+
+  link.click();
 });
 
 stage.on("mousedown touchstart", startDraw);
+
 stage.on("mousemove touchmove", drawMove);
+
 stage.on("mouseup touchend", endDraw);
+
 stage.on("mouseleave touchend", endDraw);
 
 window.addEventListener("resize", () => {
   stage.width(stageContainer.clientWidth);
+
   stage.height(stageContainer.clientHeight);
 
   background.width(stage.width());
+
   background.height(stage.height());
+
   background.fillLinearGradientEndPoint({
     x: 0,
     y: stage.height(),
   });
 
   bgLayer.draw();
+
   drawLayer.draw();
+
+  replayLayer.draw();
 });

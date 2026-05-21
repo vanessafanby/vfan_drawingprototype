@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Sketch the Sound</title>
 
     <link rel="stylesheet" href="reset.css" />
@@ -10,73 +11,125 @@
 
     <script src="https://unpkg.com/konva@9/konva.min.js"></script>
     <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+    <link rel="stylesheet" href="https://use.typekit.net/owy1qhc.css" />
   </head>
 
   <body>
+    <!-- POPUP -->
     <div id="popup">
       <div class="popup-box">
         <p>
-          <br />
-          Welcome to Sketchy Sketch Sound! <br />
-          <br />
+          Welcome to Sketchy Sketch Sound!<br /><br />
 
-          As you draw on the canvas, audio will be generated, so make sure your
-          sound is turned ON!<br />Have fun!
+          Draw freely on the canvas and create sound through movement.<br />
+          Different sound brushes create different instruments.<br /><br />
+
+          Have fun exploring ✨
         </p>
 
-        <button id="okBtn">OK</button>
+        <button id="okBtn">Enter</button>
       </div>
     </div>
 
     <div class="app">
+      <!-- LEFT PANEL -->
       <aside class="panel">
         <h1>Sketchy Sketch Sound!</h1>
 
-        <button id="audioBtn" class="primary">🔇</button>
-
+        <!-- BRUSH -->
         <section class="group">
           <h2>Brush Tool</h2>
+
           <div class="row">
             <button class="tool-btn active" data-tool="pen">Pen 🖋️</button>
+
             <button class="tool-btn" data-tool="soft">Soft Brush 🖌️</button>
           </div>
         </section>
 
+        <!-- COLOUR -->
         <section class="group">
           <h2>Colour</h2>
+
           <input id="colorPicker" type="color" value="#7ea8bf" />
         </section>
 
+        <!-- INSTRUMENT -->
         <section class="group">
-          <h2>Brush Size</h2>
-          <input id="sizeSlider" type="range" min="1" max="28" value="10" />
-          <p class="mini-note">
-            <br />Thin = Flute 🪈<br /><br />Medium = Piano 🎹<br />
-            <br />Thick = Guitar 🎸<br />
-          </p>
+          <h2>Instrument Brush</h2>
+
+          <div class="brush-size-row">
+            <button class="size-btn active" data-size="small">
+              <span class="dot small-dot"></span>
+
+              Flute
+            </button>
+
+            <button class="size-btn" data-size="medium">
+              <span class="dot medium-dot"></span>
+
+              Piano
+            </button>
+
+            <button class="size-btn" data-size="large">
+              <span class="dot large-dot"></span>
+
+              Guitar
+            </button>
+          </div>
         </section>
 
+        <!-- SCALE -->
+        <section class="group">
+          <h2>Scale / Key</h2>
+
+          <select id="scaleSelect">
+            <option value="pentatonic">Pentatonic</option>
+
+            <option value="major">Major</option>
+
+            <option value="minor">Minor</option>
+          </select>
+        </section>
+
+        <!-- VOLUME -->
+        <section class="group">
+          <h2>Volume</h2>
+
+          <input id="volumeSlider" type="range" min="-20" max="5" value="-6" />
+        </section>
+
+        <!-- CANVAS -->
         <section class="group">
           <h2>Canvas</h2>
+
           <div class="row">
             <button id="undoBtn">↩</button>
+
             <button id="redoBtn">↪</button>
+
             <button id="clearBtn">Clear</button>
           </div>
         </section>
 
-        <p class="note">
-          <!-- Press Start Sound, choose a brush, then doodle freely on the canvas. -->
-        </p>
+        <!-- EXPORT -->
+        <section class="group">
+          <h2>Export</h2>
+
+          <button id="exportBtn">Save Artwork ✨</button>
+        </section>
       </aside>
 
+      <!-- CANVAS -->
       <main class="canvas-wrap">
         <div id="stage-container"></div>
 
+        <!-- LOOP PANEL -->
         <div class="echo-panel">
           <div class="echo-top">
             <span id="recordDot" class="record-dot"></span>
-            <span id="recordingStatus">Echo ready</span>
+
+            <span id="recordingStatus"> Echo ready </span>
           </div>
 
           <div class="progress-track">
@@ -85,6 +138,7 @@
 
           <div class="echo-buttons">
             <button id="toggleLoopBtn">Begin Echo</button>
+
             <button id="clearLoopBtn">Clear Echo</button>
           </div>
         </div>

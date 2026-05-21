@@ -1,8 +1,8 @@
 html,
 body {
   overflow: hidden;
-  font-family: Optima, sans-serif;
-  background: #e9f1f2;
+  font-family: Optima, Georgia, serif;
+  background: #f4eef6;
   color: #35424a;
 }
 
@@ -10,23 +10,23 @@ body {
   width: 100vw;
   height: 100vh;
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 290px 1fr;
 }
 
 .panel {
-  background: rgba(255, 255, 255, 0.9);
-  border-right: 1px solid rgba(70, 90, 110, 0.15);
+  background: linear-gradient(180deg, #fff9fd 0%, #eef7fa 100%);
+  border-right: 1px solid rgba(120, 90, 130, 0.15);
   padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   z-index: 2;
 }
 
 .panel h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
   margin: 0;
+  font-size: 1.55rem;
+  color: #3f4b56;
 }
 
 .group {
@@ -36,46 +36,75 @@ body {
 }
 
 .group h2 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #50616b;
   margin: 0;
+  font-size: 0.95rem;
+  color: #5b6173;
 }
 
 .row {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+}
+
+button,
+select,
+input {
+  font-family: inherit;
 }
 
 button {
   border: 0;
   border-radius: 14px;
   padding: 10px 12px;
-  background: #d8e6ea;
+  background: #e5dce9;
   color: #314048;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-  font-size: 0.9rem;
+  transition: 0.2s ease;
   flex: 1;
 }
 
 button:hover {
-  background: #cddfe5;
-}
-
-button:active {
-  transform: translateY(1px);
+  background: #dbcfe3;
+  transform: translateY(-1px);
 }
 
 button.active {
-  background: #87aebe;
+  background: linear-gradient(135deg, #8fb6c9, #c9a4ce);
   color: white;
 }
 
-button.primary {
-  background: #7398a7;
-  color: white;
+.tool-btn,
+.size-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.brush-size-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dot {
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.small-dot {
+  width: 7px;
+  height: 7px;
+}
+
+.medium-dot {
+  width: 13px;
+  height: 13px;
+}
+
+.large-dot {
+  width: 20px;
+  height: 20px;
 }
 
 input[type="color"] {
@@ -83,57 +112,58 @@ input[type="color"] {
   height: 42px;
   border: 0;
   border-radius: 12px;
-  background: transparent;
   cursor: pointer;
+  background: transparent;
 }
 
 input[type="range"] {
   width: 100%;
-  accent-color: #87aebe;
+  accent-color: #b48ac4;
 }
 
-.mini-note {
-  font-size: 0.78rem;
-  line-height: 1.4;
-  color: #6b7b85;
-  margin: 0;
-}
-
-.note {
-  margin-top: auto;
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: #6b7b85;
+select {
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 12px;
+  background: #e5dce9;
+  color: #314048;
 }
 
 .canvas-wrap {
   position: relative;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, #f6fbfb 0%, #e7f0f1 100%);
+  background: radial-gradient(
+      circle at top right,
+      rgba(232, 190, 223, 0.35),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(170, 210, 225, 0.35),
+      transparent 35%
+    ),
+    linear-gradient(180deg, #fbf7fc 0%, #eaf4f6 100%);
 }
 
 #stage-container {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
 }
 
-/* echo loop panel */
 .echo-panel {
   position: absolute;
   left: 50%;
-  bottom: 24px;
+  bottom: 34px;
   transform: translateX(-50%);
+  width: 380px;
+  padding: 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(95, 90, 120, 0.12);
   z-index: 5;
-  width: 320px;
-  padding: 14px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(70, 90, 110, 0.16);
-  box-shadow: 0 10px 28px rgba(60, 72, 86, 0.12);
-  backdrop-filter: blur(8px);
 }
 
 .echo-top {
@@ -141,8 +171,6 @@ input[type="range"] {
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
-  font-size: 0.88rem;
-  color: #50616b;
 }
 
 .record-dot {
@@ -153,24 +181,13 @@ input[type="range"] {
 }
 
 .record-dot.recording {
-  background: #d56f6f;
+  background: #d56f8f;
   animation: pulse 1s infinite;
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-
   50% {
-    transform: scale(1.35);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 0.6;
+    transform: scale(1.3);
   }
 }
 
@@ -178,7 +195,7 @@ input[type="range"] {
   width: 100%;
   height: 8px;
   border-radius: 999px;
-  background: rgba(116, 145, 155, 0.22);
+  background: rgba(150, 130, 160, 0.2);
   overflow: hidden;
   margin-bottom: 12px;
 }
@@ -186,8 +203,7 @@ input[type="range"] {
 .progress-fill {
   width: 0%;
   height: 100%;
-  background: #87aebe;
-  border-radius: 999px;
+  background: linear-gradient(90deg, #8fb6c9, #c9a4ce);
 }
 
 .echo-buttons {
@@ -195,70 +211,27 @@ input[type="range"] {
   gap: 8px;
 }
 
-.echo-buttons button {
-  font-size: 0.84rem;
-  padding: 8px 10px;
-}
-
-/* popup */
 #popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(200, 200, 200, 0.5);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(230, 220, 235, 0.55);
+  backdrop-filter: blur(8px);
   z-index: 999;
 }
 
 .popup-box {
-  background: #e6e6e6;
-  border: 2px solid black;
-  padding: 25px 40px;
-  width: 480px;
+  background: linear-gradient(180deg, #fff9fd 0%, #edf6f8 100%);
+  border: 2px solid rgba(160, 130, 170, 0.35);
+  border-radius: 26px;
+  padding: 32px 44px;
+  width: 500px;
   text-align: center;
+  box-shadow: 0 18px 50px rgba(80, 70, 90, 0.16);
 }
 
-.popup-box p {
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-#okBtn {
-  flex: initial;
-  padding: 4px 12px;
-  border: 1px solid #333;
-  border-radius: 0;
-  background: #ddd;
-  color: #000;
-  cursor: pointer;
-}
-
-#okBtn:hover {
-  background: #ccc;
-}
-
-@media (max-width: 860px) {
-  .app {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-  }
-
-  .panel {
-    border-right: 0;
-    border-bottom: 1px solid rgba(70, 90, 110, 0.15);
-  }
-
-  .popup-box {
-    width: calc(100% - 40px);
-    padding: 20px;
-  }
-
-  .echo-panel {
-    width: calc(100% - 40px);
-    bottom: 16px;
-  }
+.popup-box button {
+  margin-top: 20px;
 }

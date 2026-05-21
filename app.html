@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sketch Sound Studio</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- LEFT PANEL -->
+      <aside class="panel">
+        <h1>Sketch Sound</h1>
+
+        <div class="group">
+          <h2>Brush</h2>
+          <div class="row">
+            <button class="tool-btn active" data-tool="pen">Pen</button>
+            <button class="tool-btn" data-tool="soft">Soft</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>Colour</h2>
+          <input type="color" id="colorPicker" value="#6fa8dc" />
+        </div>
+
+        <div class="group">
+          <h2>Sound Scale</h2>
+          <select id="scaleSelect">
+            <option value="major">Major</option>
+            <option value="minor">Minor</option>
+            <option value="pentatonic">Pentatonic</option>
+          </select>
+        </div>
+
+        <div class="group">
+          <h2>Volume</h2>
+          <input type="range" id="volumeSlider" min="-30" max="0" value="-10" />
+        </div>
+
+        <div class="group">
+          <h2>Export</h2>
+          <button id="exportBtn">Export Audio</button>
+        </div>
+
+        <div class="group">
+          <h2>Canvas</h2>
+          <div class="row">
+            <button id="undoBtn">Undo</button>
+            <button id="redoBtn">Redo</button>
+            <button id="clearBtn">Clear</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CANVAS -->
+      <main class="canvas-wrap">
+        <div id="stage-container"></div>
+
+        <div class="echo-panel">
+          <div class="echo-top">
+            <span id="recordDot"></span>
+            <span id="status">Ready</span>
+          </div>
+
+          <div class="progress">
+            <div id="bar"></div>
+          </div>
+
+          <div class="row">
+            <button id="recordBtn">Start Loop</button>
+            <button id="clearLoopBtn">Clear</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
