@@ -5,6 +5,9 @@ body {
   background: #f4eef6;
   color: #35424a;
 }
+/* I used 'overflow: hidden' to make the website feels like a full screen canvas. I chose Optima and Georgia because they feel softer than Arial, and looks more engaing for the user instead of a 'boring', 'default' font. This also makes the page feel less like a plain web app. 
+Furthermore, I changed from the previous blue background to a pale lavendar background since I decided to use a combination of other soft colour palettes. 
+To add on, I used a dark navy grey text is easy to read, but it still feels soft. (not pure black since it just looks too bold)*/
 
 .app {
   width: 100vw;
@@ -12,6 +15,8 @@ body {
   display: grid;
   grid-template-columns: 290px 1fr;
 }
+/* Here, I used a grid so the page has two clear parts: a tool panel on the left and the canvas on the right. 
+I wanted the left panel to stay narrow, and the canvas getting the rest of the space, just to make the drawing area feel open. */
 
 .panel {
   background: linear-gradient(180deg, #fff9fd 0%, #eef7fa 100%);
@@ -22,35 +27,40 @@ body {
   gap: 18px;
   z-index: 2;
 }
-
+/* I gave sidebar has a soft gradient and a thin purple border on the right side to separate it from the canvas. I chose these colours because they match the calm and creative mood of the website. 
+Furthermore, I used a thin border here to separate the controls from the canvas. I also used the flex layout so each section stacks neatly, with gaps to make the tools space out evenly allowing to feel neat and nicer. */
 .panel h1 {
   margin: 0;
   font-size: 1.55rem;
   color: #3f4b56;
 }
+/* I removed the default margin so the title sits at the top. I made it the font size larger than the other text so users see the project name first. The colour is also kept dark, not too bold and strong, and still enough to read. */
 
 .group {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+/* I used this class for each section, such as the brush tool, colour and canvas. This is to keep the heading and controls in a neat column and making the overall interface easier to read and view. */
 
 .group h2 {
   margin: 0;
   font-size: 0.95rem;
   color: #5b6173;
 }
-
+/* Here, I made the section heading smaller than the main title.  */
 .row {
   display: flex;
   gap: 8px;
 }
+/* Here, it is for buttons that sit beside each other, like the pen and brush tool. The gap here is just to make it look nicer. */
 
 button,
 select,
 input {
   font-family: inherit;
 }
+/* Here is where I wanted the buttons, dropdowns, and inputs use the same font as the rest of the page. Just to make it feel neat and consistent. */
 
 button {
   border: 0;
@@ -72,7 +82,11 @@ button.active {
   background: linear-gradient(135deg, #8fb6c9, #c9a4ce);
   color: white;
 }
+/* Here, I used this to show which tool and instrument is selected. I decided to make it gradient because it can make the active button stand out. I used blue and purple because they match the wider colour palette. */
 
+/* Buttons are rounded with a dusty purple background. On hover they lift by 1px and darken slightly, this to show users that the button can be clicked
+To add on, the active state uses a blue to purple gradient with white text. This is the same colour pair I use throughout the app so active states are always recognisable. */
+/* Additionally, I added hover feedback so users know the button is active. The small upward movement makes the button feel responsive. */
 .tool-btn,
 .size-btn {
   display: flex;
@@ -80,12 +94,14 @@ button.active {
   justify-content: center;
   gap: 8px;
 }
+/* I used flex here so icons, dots, and text align in the centre. */
 
 .brush-size-row {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+/* I placed the instrument brush buttons in a column so that each instrument has its own clear row. It also makes the dot sizes easier to compare. */
 
 .dot {
   border-radius: 50%;
@@ -96,16 +112,22 @@ button.active {
   width: 7px;
   height: 7px;
 }
+/* This dot represents the small brush and flute. I made it small to match the light sound. */
 
 .medium-dot {
   width: 13px;
   height: 13px;
 }
+/* This dot represents the medium brush and piano.*/
 
 .large-dot {
   width: 20px;
   height: 20px;
 }
+/* Lastly, this dot represents the large brush and guitar. I made it larger so users can see that this brush makes a stronger mark, and stronger sound. */
+
+/* Each instrument button has a dot that previews the brush stroke width. In this case, I used circles to represent the brush size.
+Here, I used 'currentColor', so that the dot uses the same colour as the button text. This means that the dot would also turns white when the button is active, allowing the user know that it is responsive and has feedback. */
 
 input[type="color"] {
   width: 100%;
@@ -115,11 +137,15 @@ input[type="color"] {
   cursor: pointer;
   background: transparent;
 }
+/* Here, is the colour palette/colour picker.
+I made the colour picker full width so it feels like a part of the panel. 
+Furthermore, I kept it rounded corners to match the buttons with a transparent background. This is to allow the colour picker show clearly.*/
 
 input[type="range"] {
   width: 100%;
   accent-color: #b48ac4;
 }
+/* I made the slider full width as well, just to make it look consistent and easy to use. I have made the accent colour remain purple, so it keeps within the same visual style. */
 
 select {
   width: 100%;
@@ -129,6 +155,7 @@ select {
   background: #e5dce9;
   color: #314048;
 }
+/* I have also styled the scale dropdown to match the buttons. Like having same background and border radius, just to allow the sidebar looks consistent.*/
 
 .canvas-wrap {
   position: relative;
@@ -151,6 +178,8 @@ select {
   position: absolute;
   inset: 0;
 }
+/* Here, I've used layered gradients for the background. The pink glow at the top and a blue glow at the bottom make the canvas feel less flat. 
+ Compared to my previous prototype that was just boring plain blue, for my final website I chose to have these colours because I wanted the space to feel calm, light, and open. The canvas should feel like a place to explore, not just a blank white box.*/
 
 .echo-panel {
   position: absolute;
@@ -165,6 +194,8 @@ select {
   box-shadow: 0 12px 30px rgba(95, 90, 120, 0.12);
   z-index: 5;
 }
+/* Here, I placed the loop panel at the bottom centre of the canvas to keep it close to the drawing area but out of the way at the same time. During the designing process, I was hesitated to put the 'loop' inside the sidebar, on the top right corner or in the middle (top/bottom). Lastly, I choose to keep it in the bottom middle since it wont bother the user drawing, whilst allowing them to know their process at the same time.
+I have also used a soft white background and blur make it feel light. Moreover, the shadow lifts it from the canvas, so users can see it as a control area. */
 
 .echo-top {
   display: flex;
@@ -172,6 +203,7 @@ select {
   gap: 8px;
   margin-bottom: 10px;
 }
+/* I used this to align the record dot and status text. It gives the users a quick way to see the loop state and see their process.*/
 
 .record-dot {
   width: 9px;
@@ -179,17 +211,21 @@ select {
   border-radius: 50%;
   background: #9eb3ba;
 }
+/* Here, I've made the dot small with it acting like a quiet status light. */
 
 .record-dot.recording {
   background: #d56f8f;
   animation: pulse 1s infinite;
 }
+/* At rest the dot is grey blue, but when the loop is recording, the dot turns pink and triggers a pulse animation. I added this so users can see that the system is active, and is responding to their action. */
+/*  */
 
 @keyframes pulse {
   50% {
     transform: scale(1.3);
   }
 }
+/* I have added a pulse effect here. The dot grows slightly in the middle of the animation, then returns to normal. */
 
 .progress-track {
   width: 100%;
@@ -199,12 +235,15 @@ select {
   overflow: hidden;
   margin-bottom: 12px;
 }
+/* I used rounded ends to match the rest of the interface. */
 
 .progress-fill {
   width: 0%;
   height: 100%;
   background: linear-gradient(90deg, #8fb6c9, #c9a4ce);
 }
+/* I added the moving part of the progress bar here. Where a blue purple gradient fills during the loop.
+I've tried to make every colour match with each other to avoid it feel disconnected to the rest of the page.*/
 
 .echo-buttons {
   display: flex;
@@ -221,6 +260,9 @@ select {
   backdrop-filter: blur(8px);
   z-index: 999;
 }
+/* This is the pop up screen when the user first enters the website. (with a breif introduction inside so they know what to do and what the website is about)
+I used this to cover the whole screen when the user first enters. I have also included a blur effect to make the background feel soft and paused. I wanted the user to read the intro first, then enter the canvas */
+/* I styled this card with the same gradient colour as the sidebar, a soft purple border, and very rounded corners. This is to make everything look and feel linked together.*/
 
 .popup-box {
   background: linear-gradient(180deg, #fff9fd 0%, #edf6f8 100%);
@@ -232,6 +274,35 @@ select {
   box-shadow: 0 18px 50px rgba(80, 70, 90, 0.16);
 }
 
+/* I have also added space above the Enter button so it doesn't sit too close to the text --> easier to read */
 .popup-box button {
   margin-top: 20px;
 }
+
+/* The CSS I designed here aims to make the project feel calm, creative, and easy to use. 
+I used colour inspirations from ColourHunt to improve my layout. And the end, I choose a combination of soft pink, purple, and blue tones because they support the sound and drawing concept. 
+Keeping in mind, my three charateristics were: calm, engaging and creative. Therefore, I kept the layout simple and clean so users can focus on drawing. */
+/* https://colorhunt.co/ This is link I had inspirations for my website. */
+
+/* 
+What changed from my previous version:
+
+/*
+In my previous CSS, I used a soft blue grey palette and Arial as the main font.
+In this version, I changed to pink, purple, and blue tones. The new palette
+feels more playful while keeping the calm mood of the project.
+
+I updated the button colours and active states so the selected tool is easier
+to spot. Active buttons now use a blue to purple gradient that fits the new palette.
+
+I redesigned the popup. The previous version looked plain. This one has rounded
+corners, a soft gradient, and a light border so it feels like part of the app
+rather than a system dialog.
+
+I added styles for the scale selector and volume slider. These controls did not
+exist in the earlier version.
+
+I also added the echo panel. It sits over the canvas and shows the loop status,
+the record dot, and the progress bar. I kept the styling subtle so it is visible
+without pulling focus from the canvas.
+*/

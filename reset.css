@@ -3,6 +3,8 @@
 *::after {
   box-sizing: border-box;
 }
+/* Here, I added this so padding/borders stay inside the element’s width and height. 
+Which makes the layout clean and look more consistent across the page. */
 
 html,
 body {
@@ -10,3 +12,5 @@ body {
   width: 100%;
   height: 100%;
 }
+/* Here, I made both html and body fill the full browser window. 
+This because I wanted the website to take up the entire screen and feel immersive, rather than sitting inside the browser.*/

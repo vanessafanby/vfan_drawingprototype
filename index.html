@@ -5,37 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Sketch the Sound</title>
+    <!-- name shown in the browser tab -->
 
     <link rel="stylesheet" href="reset.css" />
     <link rel="stylesheet" href="style.css" />
 
     <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <!-- Konva helps me build the canvas, allowing users to doodle on it-->
+    <!-- Tone.js helps me creates the sound. In this case, I need it to connect brush to notes and instruments. -->
     <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
   
-
+  </head>
   <body>
-    <!-- POPUP -->
+ 
     <div id="popup">
       <div class="popup-box">
         <p>
           Welcome to Sketchy Sketch Sound!<br /><br />
-
-          Draw freely on the canvas and create sound through movement.<br />
-          Different sound brushes create different instruments.<br /><br />
-
-          Have fun exploring ✨
+        
+          Draw music. Paint sound. Your brush is your instrument.<br /><br />
+          Loop your sounds, replay your session, and save your drawing when you're done.<br /><br />
+        
+         Have fun exploring!
         </p>
-
+        <!-- Here, I have added a pop up box, where users get a brief introduction of what the website is about and what they'll experience.-->
+         <!-- Since this is the users landing page, the first thing they'll read, I have kept it short and sharp. The first line names the app. Followed by the second line telling them what the website does in plain terms. Lastly, the third line tells them the three main things they can explore. Which is loop, replay, and save.-->
+         <!-- The 'Enter' button is just to ensure that the users has read everything on the card and ready to play on themselves. -->
         <button id="okBtn">Enter</button>
       </div>
     </div>
 
     <div class="app">
-      <!-- LEFT PANEL -->
+     
       <aside class="panel">
-        <h1>Sketchy Sketch Sound!</h1>
+        <h1>Sketchy Sketch Sound</h1>
+        <!-- I put the app name at the top of the sidebar, so users know where they are and what the website is called. -->
+         <!-- I also tried to place the title in the top middle of the page but it didn't look that well, therefore I kept it inside the sidebar -->
+          <!-- I personally think that this is a creative name too. Sketchy Sketch Sound, sounds like a tongue twister -->
 
-        <!-- BRUSH -->
+      
         <section class="group">
           <h2>Brush Tool</h2>
 
@@ -45,60 +53,75 @@
             <button class="tool-btn" data-tool="soft">Soft Brush 🖌️</button>
           </div>
         </section>
+        <!-- Here, I have given each brush button a data tool attribute so my js will know which tool to switch to. But the pen is the default selected tool. -->
+         <!-- Furthermore, I have added emoji's for each brush type, just to make it look nicer, not overloaded with too much text. (peer review, people say that there's too much text so can add some symbols and emojis to replace text) -->
 
-        <!-- COLOUR -->
+       
         <section class="group">
           <h2>Colour</h2>
 
           <input id="colorPicker" type="color" value="#7ea8bf" />
         </section>
+        <!-- Here is the colour picker. I set the default value to #7ea8bf since it's a soft blue grey colour that works well against the gradient background. 
+        The user can still choose any colour they want. -->
 
-        <!-- INSTRUMENT -->
+        
         <section class="group">
           <h2>Instrument Brush</h2>
-
+<!-- Here are the different dot sizes=brush sizes for different instruments. small for flute, medium for piano, large for guitar. 
+ This gives users a visual preview of the stroke width before the users draw. -->
           <div class="brush-size-row">
             <button class="size-btn active" data-size="small">
               <span class="dot small-dot"></span>
 
               Flute
             </button>
+            <!-- This button uses the small brush and flute sound. I chose flute for the small brush because it feels light and soft. -->
 
             <button class="size-btn" data-size="medium">
               <span class="dot medium-dot"></span>
 
               Piano
             </button>
+            <!-- This button uses the medium brush and piano sound. I chose piano as the default and middle option since it feels balanced and familiar to most people. -->
 
             <button class="size-btn" data-size="large">
               <span class="dot large-dot"></span>
 
               Guitar
             </button>
+            <!-- NEW! This button uses the large brush and guitar sound. I wanted the larger brush to feel stronger and more grounded. -->
           </div>
         </section>
 
-        <!-- SCALE -->
+       
         <section class="group">
           <h2>Scale / Key</h2>
+          <!-- NEW! I added this so users can change the mood of the sound. -->
+           <!-- I have also added a dropdown menu for the users to choose from a pentatonic, major or minor scale, just to make the overall experience sound/look more interesting. 
+            Here, I have decuded to use a dropdown to save space and keeps the interface simple. (too much will be too crowded) -->
 
           <select id="scaleSelect">
             <option value="pentatonic">Pentatonic</option>
+            <!-- Pentatonic is the default because it sounds most calm and appealing. -->
 
             <option value="major">Major</option>
+            <!-- Major gives the sound a brighter feeling. -->
 
             <option value="minor">Minor</option>
+            <!-- Minor gives the sound a softer and more emotional feeling. -->
           </select>
         </section>
 
-        <!-- VOLUME -->
+        
         <section class="group">
           <h2>Volume</h2>
 
           <input id="volumeSlider" type="range" min="-20" max="5" value="-6" />
         </section>
+        <!-- NEW! I have also added a volume slider here. Since my project is related to sound, I think sound comfort is important too. Users should be able to make the experience softer or louder. -->
 
-        <!-- CANVAS -->
+       
         <section class="group">
           <h2>Canvas</h2>
 
@@ -110,40 +133,58 @@
             <button id="clearBtn">Clear</button>
           </div>
         </section>
-
-        <!-- EXPORT -->
+        <!-- NEW! I use arrow symbols for undo and redo rather than text labels. Most users recognise these symbols from other apps. -->
+         <!-- NEW! However, I have kept 'Clear' as text sincebecause "clear" is an action with a consequence -->
+<!-- These three buttons give users full control over their actions and what stays on the canvas. -->
         <section class="group">
           <h2>Export</h2>
 
-          <button id="exportBtn">Save Artwork ✨</button>
+          <button id="exportBtn">Save Artwork</button>
         </section>
       </aside>
 
-      <!-- CANVAS -->
+      <!-- NEW! I've added a new function which is to allow the user to download their drawing as an image. 
+       I added it so the user can keep the result of their session. -->
+       <!-- I put this at the bottom of the sidebar because it is the last action in the natural flow. The normal process: draw, adjust, then save. -->
+
+      
       <main class="canvas-wrap">
         <div id="stage-container"></div>
 
-        <!-- LOOP PANEL -->
+      
         <div class="echo-panel">
           <div class="echo-top">
+
             <span id="recordDot" class="record-dot"></span>
+            <!-- Here, I have placed the loop panel inside the canvas area (floating at the bottom) rather than the sidebar. 
+             I have made this choice because the loop is tied to what is happening on the canvas, not to the tool controls. Moreover, it just looks really weird when in the sidebar. -->
 
-            <span id="recordingStatus"> Echo ready </span>
+             <!-- I have added a small circle as a record button that pulses when the loop records. 
+              I animate it with CSS rather than JavaScript. This is because the CSS animation is lighter and doesn't need a timer.  -->
+            <span id="recordingStatus"> Loop ready </span>
           </div>
-
+<!-- Furthermore, I added the 'recordingStatus' to show the user direct message. Like wheather if it's "Loop ready" or "Recording loop...". Together, they tell the user the exact state of the loop at a glance. -->
           <div class="progress-track">
             <div id="loopProgress" class="progress-fill"></div>
           </div>
 
           <div class="echo-buttons">
-            <button id="toggleLoopBtn">Begin Echo</button>
-
-            <button id="clearLoopBtn">Clear Echo</button>
+            <button id="toggleLoopBtn">Begin Loop</button>
+            <!-- This button starts and stops the loop. I used one button instead of two because it keeps the interface simple. Before, I had 'begin loop' and 'clear loop', however after some feedback, it was too confusing so I deleted it and changed other layout and functions.  -->
           </div>
-        </div>
       </main>
     </div>
 
     <script src="main.js"></script>
   </body>
 </html>
+
+<!-- 
+What changed from my previous version:
+
+In my previous version, the user had to press a separate Start Sound button before drawing. I removed that step since it wasn't clear enough during peer user testing. Now, the sound starts after the user enters through the popup, which makes the experience feel smoother.
+Furthermore, I also changed the instrument section. Before, users had to select instruments and brush sizes separately. Now, the brush size and instrument are connected. A small brush plays flute, a medium brush plays piano, and a large brush plays guitar. 
+I did this because I wanted the visual weight of the brush to match the sound. Furthermore, I added also added a Scale/Key dropdown so users can change the mood of the sound. This gives them more control without making the page feel too complex. I also added a volume slider so users can adjust the sound to a suitable level of their choice.
+
+Moreover, I added a 'Save Artwork' button so users can download their drawing when they finish. I also added the loop panel on the canvas, allowing users to record and replay their sound gestures. Compared to the previous version, this makes the project feel more like a small sound performance, and not only a drawing tool.
+--> 
